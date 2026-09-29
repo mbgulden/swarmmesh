@@ -1,8 +1,10 @@
 import asyncio
 import time
+
 from swarmmesh.broker import PeerBroker
-from swarmmesh.types import Message, TopicSubscription, PeerInfo
 from swarmmesh.transport import InProcessTransport
+from swarmmesh.types import Message, PeerInfo, TopicSubscription
+
 
 def test_broker_subscribe_fanout():
     async def run_test():
