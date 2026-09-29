@@ -1,6 +1,8 @@
 import asyncio
+
 from swarmmesh.channel import StreamChannel
 from swarmmesh.types import ChannelConfig, MeshError
+
 
 def test_channel_send_recv():
     async def run_test():
@@ -48,3 +50,12 @@ def test_channel_send_closed():
             pass
 
     asyncio.run(run_test())
+
+def test_channel_construct_without_running_loop():
+    # Regression test for Python 3.9: constructing a channel must not touch
+    # the event loop (asyncio.Queue/Event bind to the loop at construction
+    # time there and raise RuntimeError when there is none).
+    config = ChannelConfig(buffer_size=5)
+    ch = StreamChannel(config)
+    assert ch.queue is None
+    assert ch.config.buffer_size == 5

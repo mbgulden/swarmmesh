@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import asyncio
 import json
 from abc import ABC, abstractmethod
-from typing import Optional, Dict
 
-from .types import Message, MeshError
+from .types import MeshError, Message
+
 
 class Transport(ABC):
     @abstractmethod
@@ -24,19 +26,23 @@ class Transport(ABC):
 
 class InProcessTransport(Transport):
     def __init__(self) -> None:
-        self.queue: asyncio.Queue[Message] = asyncio.Queue()
+        # Queue is created in connect() so the transport can be constructed
+        # outside a running event loop (Python 3.9 binds asyncio.Queue to
+        # the loop at construction time).
+        self.queue: asyncio.Queue[Message] | None = None
         self.is_connected: bool = False
 
     async def connect(self) -> None:
+        self.queue = asyncio.Queue()
         self.is_connected = True
 
     async def send(self, message: Message) -> None:
-        if not self.is_connected:
+        if not self.is_connected or self.queue is None:
             raise MeshError("Transport not connected")
         await self.queue.put(message)
 
     async def recv(self) -> Message:
-        if not self.is_connected:
+        if not self.is_connected or self.queue is None:
             raise MeshError("Transport not connected")
         return await self.queue.get()
 
@@ -47,13 +53,14 @@ class TCPTransport(Transport):
     def __init__(self, host: str, port: int):
         self.host = host
         self.port = port
-        self.reader: Optional[asyncio.StreamReader] = None
-        self.writer: Optional[asyncio.StreamWriter] = None
+        self.reader: asyncio.StreamReader | None = None
+        self.writer: asyncio.StreamWriter | None = None
 
     async def connect(self) -> None:
         try:
             self.reader, self.writer = await asyncio.open_connection(self.host, self.port)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
+            # Wrap any connection failure in the domain error type
             raise MeshError(f"Failed to connect to {self.host}:{self.port}: {e}")
 
     async def send(self, message: Message) -> None:

@@ -1,6 +1,8 @@
 import sys
 from unittest.mock import patch
+
 from swarmmesh.cli import main
+
 
 def test_cli_status(capsys):
     with patch.object(sys, 'argv', ['swarmmesh', 'status']):

@@ -1,7 +1,9 @@
 import asyncio
 import time
+
 from swarmmesh.transport import InProcessTransport
-from swarmmesh.types import Message, MeshError
+from swarmmesh.types import MeshError, Message
+
 
 def test_inprocess_transport_send_recv():
     async def run_test():
@@ -32,3 +34,11 @@ def test_inprocess_transport_not_connected():
             pass
 
     asyncio.run(run_test())
+
+def test_inprocess_transport_construct_without_running_loop():
+    # Regression test for Python 3.9: constructing a transport must not touch
+    # the event loop (asyncio.Queue binds to the loop at construction time
+    # there and raises RuntimeError when there is none).
+    t = InProcessTransport()
+    assert t.queue is None
+    assert not t.is_connected

@@ -1,5 +1,7 @@
 import asyncio
+
 from swarmmesh.discovery import PeerDiscovery
+
 
 def test_discovery_static_peer():
     async def run_test():

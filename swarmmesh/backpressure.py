@@ -1,7 +1,7 @@
 import time
-from typing import Deque
-from collections import deque
+
 from .types import BackpressurePolicy, MeshError
+
 
 class BackpressureController:
     def __init__(self, policy: BackpressurePolicy, max_tokens_per_second: float = 100.0, queue_limit: int = 1000):

@@ -1,24 +1,32 @@
-from .types import MeshError, PeerInfo, Message, ChannelConfig, TopicSubscription, BackpressurePolicy, TransportProtocol
-from .transport import Transport, InProcessTransport
+from .backpressure import BackpressureController
 from .broker import PeerBroker
 from .channel import StreamChannel
-from .backpressure import BackpressureController
 from .discovery import PeerDiscovery
 from .mesh import EventMesh
+from .transport import InProcessTransport, Transport
+from .types import (
+    BackpressurePolicy,
+    ChannelConfig,
+    MeshError,
+    Message,
+    PeerInfo,
+    TopicSubscription,
+    TransportProtocol,
+)
 
 __all__ = [
-    "EventMesh",
-    "PeerBroker",
-    "StreamChannel",
     "BackpressureController",
-    "PeerDiscovery",
-    "Transport",
-    "InProcessTransport",
-    "Message",
-    "PeerInfo",
-    "ChannelConfig",
-    "TopicSubscription",
     "BackpressurePolicy",
-    "TransportProtocol",
-    "MeshError"
+    "ChannelConfig",
+    "EventMesh",
+    "InProcessTransport",
+    "MeshError",
+    "Message",
+    "PeerBroker",
+    "PeerDiscovery",
+    "PeerInfo",
+    "StreamChannel",
+    "TopicSubscription",
+    "Transport",
+    "TransportProtocol"
 ]

@@ -1,6 +1,6 @@
-import time
 from swarmmesh.backpressure import BackpressureController
 from swarmmesh.types import BackpressurePolicy, MeshError
+
 
 def test_backpressure_rate_limit():
     # 10 tokens per second
