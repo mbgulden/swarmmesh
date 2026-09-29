@@ -1,6 +1,10 @@
+from __future__ import annotations
+
 import asyncio
-from typing import AsyncIterator, Optional
-from .types import Message, ChannelConfig, MeshError
+from collections.abc import AsyncIterator
+
+from .types import ChannelConfig, MeshError
+
 
 class StreamChannel:
     def __init__(self, config: ChannelConfig):
@@ -19,7 +23,7 @@ class StreamChannel:
         except asyncio.TimeoutError:
             raise MeshError("Timeout writing to channel")
 
-    async def _recv_token(self) -> Optional[bytes]:
+    async def _recv_token(self) -> bytes | None:
         if self.queue.empty() and self.is_closed:
             return None
             
