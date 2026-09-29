@@ -26,19 +26,23 @@ class Transport(ABC):
 
 class InProcessTransport(Transport):
     def __init__(self) -> None:
-        self.queue: asyncio.Queue[Message] = asyncio.Queue()
+        # Queue is created in connect() so the transport can be constructed
+        # outside a running event loop (Python 3.9 binds asyncio.Queue to
+        # the loop at construction time).
+        self.queue: asyncio.Queue[Message] | None = None
         self.is_connected: bool = False
 
     async def connect(self) -> None:
+        self.queue = asyncio.Queue()
         self.is_connected = True
 
     async def send(self, message: Message) -> None:
-        if not self.is_connected:
+        if not self.is_connected or self.queue is None:
             raise MeshError("Transport not connected")
         await self.queue.put(message)
 
     async def recv(self) -> Message:
-        if not self.is_connected:
+        if not self.is_connected or self.queue is None:
             raise MeshError("Transport not connected")
         return await self.queue.get()
 
