@@ -1,11 +1,13 @@
 import asyncio
 import time
-from typing import Callable, Any
-from .types import Message, ChannelConfig, TopicSubscription, PeerInfo
+from typing import Any, Callable
+
 from .broker import PeerBroker
-from .discovery import PeerDiscovery
 from .channel import StreamChannel
+from .discovery import PeerDiscovery
 from .transport import InProcessTransport
+from .types import ChannelConfig, Message, PeerInfo, TopicSubscription
+
 
 class EventMesh:
     def __init__(self, node_id: str, port: int = 0):
