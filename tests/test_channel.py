@@ -1,6 +1,8 @@
 import asyncio
+
 from swarmmesh.channel import StreamChannel
 from swarmmesh.types import ChannelConfig, MeshError
+
 
 def test_channel_send_recv():
     async def run_test():
