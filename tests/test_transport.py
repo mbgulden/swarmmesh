@@ -1,7 +1,9 @@
 import asyncio
 import time
+
 from swarmmesh.transport import InProcessTransport
-from swarmmesh.types import Message, MeshError
+from swarmmesh.types import MeshError, Message
+
 
 def test_inprocess_transport_send_recv():
     async def run_test():
