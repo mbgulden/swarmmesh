@@ -1,6 +1,8 @@
 import asyncio
+
 from swarmmesh.mesh import EventMesh
 from swarmmesh.types import ChannelConfig
+
 
 def test_mesh_publish_subscribe():
     async def run_test():
