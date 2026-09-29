@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import asyncio
 import json
 from abc import ABC, abstractmethod
-from typing import Optional, Dict
 
-from .types import Message, MeshError
+from .types import MeshError, Message
+
 
 class Transport(ABC):
     @abstractmethod
@@ -47,13 +49,14 @@ class TCPTransport(Transport):
     def __init__(self, host: str, port: int):
         self.host = host
         self.port = port
-        self.reader: Optional[asyncio.StreamReader] = None
-        self.writer: Optional[asyncio.StreamWriter] = None
+        self.reader: asyncio.StreamReader | None = None
+        self.writer: asyncio.StreamWriter | None = None
 
     async def connect(self) -> None:
         try:
             self.reader, self.writer = await asyncio.open_connection(self.host, self.port)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
+            # Wrap any connection failure in the domain error type
             raise MeshError(f"Failed to connect to {self.host}:{self.port}: {e}")
 
     async def send(self, message: Message) -> None:
