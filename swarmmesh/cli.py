@@ -1,14 +1,14 @@
 import argparse
 import sys
-import asyncio
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="swarmmesh CLI")
     subparsers = parser.add_subparsers(dest="command")
 
-    status_parser = subparsers.add_parser("status", help="Show mesh status")
-    peers_parser = subparsers.add_parser("peers", help="List peers")
-    topics_parser = subparsers.add_parser("topics", help="List topics")
+    subparsers.add_parser("status", help="Show mesh status")
+    subparsers.add_parser("peers", help="List peers")
+    subparsers.add_parser("topics", help="List topics")
     
     publish_parser = subparsers.add_parser("publish", help="Publish message")
     publish_parser.add_argument("topic", help="Topic to publish to")
