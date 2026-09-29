@@ -1,11 +1,13 @@
+from __future__ import annotations
+
+import uuid
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Callable, Any, Optional, Dict, List
-import uuid
+from typing import Any, Callable
+
 
 class MeshError(Exception):
     """Base exception for swarmmesh errors."""
-    pass
 
 class BackpressurePolicy(Enum):
     DROP_OLDEST = "drop_oldest"
@@ -24,7 +26,7 @@ class PeerInfo:
     host: str
     port: int
     last_seen: float
-    capabilities: List[str] = field(default_factory=list)
+    capabilities: list[str] = field(default_factory=list)
 
 @dataclass
 class Message:
@@ -44,4 +46,4 @@ class ChannelConfig:
 class TopicSubscription:
     topic: str
     handler: Callable[[Message], Any]
-    filter_fn: Optional[Callable[[Message], bool]] = None
+    filter_fn: Callable[[Message], bool] | None = None
