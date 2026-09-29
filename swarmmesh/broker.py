@@ -1,16 +1,17 @@
 import asyncio
 import time
-from typing import Dict, List, Optional, Callable, Any
+from typing import Callable
 
-from .types import Message, PeerInfo, TopicSubscription, MeshError
 from .transport import Transport
+from .types import Message, PeerInfo, TopicSubscription
+
 
 class PeerBroker:
     def __init__(self, node_id: str):
         self.node_id = node_id
-        self.peers: Dict[str, PeerInfo] = {}
-        self.connections: Dict[str, Transport] = {}
-        self.subscriptions: Dict[str, List[TopicSubscription]] = {}
+        self.peers: dict[str, PeerInfo] = {}
+        self.connections: dict[str, Transport] = {}
+        self.subscriptions: dict[str, list[TopicSubscription]] = {}
         self.running = False
         self.dead_peer_timeout = 60.0
 
@@ -20,7 +21,7 @@ class PeerBroker:
 
     async def stop(self) -> None:
         self.running = False
-        for peer_id, conn in self.connections.items():
+        for conn in self.connections.values():
             await conn.close()
         self.connections.clear()
         self.peers.clear()
@@ -56,8 +57,8 @@ class PeerBroker:
                         res = sub.handler(message)
                         if asyncio.iscoroutine(res):
                             await res
-                    except Exception:
-                        pass # Ignore handler errors
+                    except Exception:  # noqa: BLE001, S110
+                        pass  # Ignore handler errors: one bad subscriber must not break fanout
         
         # Send to peers (very basic routing: send to all)
         # In a real mesh this would be smarter
@@ -65,8 +66,8 @@ class PeerBroker:
             if peer_id != message.sender_id:
                 try:
                     await conn.send(message)
-                except Exception:
-                    # Ignore send errors, health check will catch it
+                except Exception:  # noqa: BLE001, S110
+                    # Ignore send errors; the health-check loop evicts dead peers
                     pass
 
     async def _health_check_loop(self) -> None:
